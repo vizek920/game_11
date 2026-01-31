@@ -42,6 +42,7 @@
         .stats-table th, .stats-table td { padding: 10px; border-bottom: 1px solid #666; text-align: center; }
         .stats-table th { border-bottom: 2px solid #d4af37; }
         h2 { text-align: center; color: #d4af37; margin-bottom: 30px; font-size: 2em; }
+        .timer-warning { color: #ff6b6b; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -101,6 +102,7 @@
             <div class="login-box">
                 <h2>لوحة الإدارة</h2>
                 <button class="team-btn" onclick="showStats()">الإحصائيات</button>
+                <button class="team-btn" onclick="toggleGameTimer()">بدء/إيقاف المؤقت</button>
                 <button class="team-btn danger" onclick="resetGame()">إعادة تعيين</button>
                 <button class="team-btn" style="background: #888;" onclick="logout()">خروج</button>
                 <div id="statsContainer"></div>
@@ -113,15 +115,34 @@
         const { createClient } = supabase;
         const supabaseClient = createClient('https://uidjszsqwuccjyzsatdk.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpZGpzenNxd3VjY2p5enNhdGRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4MDQwMzcsImV4cCI6MjA4NTM4MDAzN30.AGGAiOtEas-aW2rYSuzTCT3KbwkWrhCi9xA5AyrYxaM');
 
-        const CODES = ['POWER', 'WISDOM', 'VALOR', 'PATIENCE', 'PROMTITUDE', 'FAITH', 'HONESTY', 'JUSTICE', 'INTEGRITY'];
-        const IMAGES = ['https://i.imgur.com/mG1EsgX.jpg', 'https://i.imgur.com/BgxLUmr.jpg', 'https://i.imgur.com/shFAoGJ.jpg', 'https://i.imgur.com/9nQC9ay.jpg', 'https://i.imgur.com/X9vtn6w.jpg', 'https://i.imgur.com/23dKeLP.jpg', 'https://i.imgur.com/rICqT3D.jpg', 'https://i.imgur.com/3OAJguF.jpg', 'https://i.imgur.com/B3tnfms.jpg'];
+        // تم إضافة 11 فريق مع كلمات السر الجديدة
+        const CODES = [
+            'POWER', 'WISDOM', 'VALOR', 'PATIENCE', 'PROMTITUDE', 
+            'FAITH', 'HONESTY', 'JUSTICE', 'INTEGRITY', 'LOYALTY', 'CONFIDENCE'
+        ];
 
-        const teams = Array(9).fill(0).map((_, i) => ({id: i + 1, number: i + 1, members: [], leader: null, solved: false, attempts: 0}));
+        const IMAGES = [
+            'https://i.imgur.com/mG1EsgX.jpg', 'https://i.imgur.com/BgxLUmr.jpg', 
+            'https://i.imgur.com/shFAoGJ.jpg', 'https://i.imgur.com/9nQC9ay.jpg', 
+            'https://i.imgur.com/X9vtn6w.jpg', 'https://i.imgur.com/23dKeLP.jpg', 
+            'https://i.imgur.com/rICqT3D.jpg', 'https://i.imgur.com/3OAJguF.jpg', 
+            'https://i.imgur.com/B3tnfms.jpg'
+        ];
+
+        // إنشاء 11 فريق بدلاً من 9
+        const teams = Array(11).fill(0).map((_, i) => ({
+            id: i + 1, 
+            number: i + 1, 
+            members: [], 
+            leader: null, 
+            solved: false, 
+            attempts: 0
+        }));
 
         let currentUser = null;
         let currentTeam = null;
         let gameStarted = false;
-        let timeRemaining = 7200;
+        let timeRemaining = 7200; // ساعتان
         let timerInterval = null;
 
         function show(id) {
@@ -146,7 +167,7 @@
             if (document.getElementById('adminPass').value === 'admin123') {
                 show('admin');
             } else {
-                alert('خطأ');
+                alert('خطأ في كلمة المرور');
             }
         }
 
@@ -155,49 +176,104 @@
             currentTeam = null;
             document.getElementById('nameInput').value = '';
             document.getElementById('adminPass').value = '';
+            if (timerInterval) clearInterval(timerInterval);
             show('login');
         }
 
         async function loadData() {
-            const { data } = await supabaseClient.from('game_state').select('*').eq('id', 1).single();
-            if (data) {
-                gameStarted = data.started || false;
-                timeRemaining = data.time_remaining || 7200;
-                if (data.teams) {
-                    data.teams.forEach(t => {
-                        const team = teams.find(x => x.id === t.id);
-                        if (team) Object.assign(team, t);
-                    });
+            try {
+                const { data, error } = await supabaseClient.from('game_state').select('*').eq('id', 1);
+                
+                if (error) {
+                    console.log('لا توجد بيانات سابقة، جاري الإنشاء...');
+                    subscribe();
+                    return;
                 }
-            }
-            subscribe();
-        }
 
-        function subscribe() {
-            supabaseClient.channel('updates').on('postgres_changes', {event: '*', schema: 'public', table: 'game_state'}, (p) => {
-                if (p.new) {
-                    gameStarted = p.new.started;
-                    timeRemaining = p.new.time_remaining;
-                    if (p.new.teams) {
-                        p.new.teams.forEach(t => {
+                if (data && data.length > 0) {
+                    const gameData = data[0];
+                    gameStarted = gameData.started || false;
+                    timeRemaining = gameData.time_remaining || 7200;
+                    
+                    if (gameData.teams && Array.isArray(gameData.teams)) {
+                        gameData.teams.forEach(t => {
                             const team = teams.find(x => x.id === t.id);
                             if (team) Object.assign(team, t);
                         });
                     }
-                    if (document.getElementById('teams').classList.contains('active')) {
-                        renderTeams();
+
+                    if (gameStarted && !timerInterval) {
+                        startTimerInterval();
                     }
                 }
-            }).subscribe();
+
+                subscribe();
+            } catch (err) {
+                console.log('تم إنشاء بيانات جديدة');
+                subscribe();
+            }
+        }
+
+        function subscribe() {
+            supabaseClient
+                .channel('updates')
+                .on('postgres_changes', {event: '*', schema: 'public', table: 'game_state'}, (p) => {
+                    if (p.new) {
+                        gameStarted = p.new.started || gameStarted;
+                        timeRemaining = p.new.time_remaining || timeRemaining;
+                        
+                        if (p.new.teams && Array.isArray(p.new.teams)) {
+                            p.new.teams.forEach(t => {
+                                const team = teams.find(x => x.id === t.id);
+                                if (team) Object.assign(team, t);
+                            });
+                        }
+
+                        updateTimerDisplay();
+
+                        if (document.getElementById('teams').classList.contains('active')) {
+                            renderTeams();
+                        }
+                    }
+                })
+                .subscribe((status) => {
+                    console.log('Realtime status:', status);
+                });
         }
 
         async function save() {
-            const gameData = {
-                started: gameStarted, 
-                time_remaining: timeRemaining, 
-                teams: teams.map(t => ({id: t.id, number: t.number, members: t.members, leader: t.leader, solved: t.solved, attempts: t.attempts}))
-            };
-            await supabaseClient.from('game_state').update(gameData).eq('id', 1);
+            try {
+                const gameData = {
+                    started: gameStarted,
+                    time_remaining: timeRemaining,
+                    teams: teams.map(t => ({
+                        id: t.id,
+                        number: t.number,
+                        members: t.members,
+                        leader: t.leader,
+                        solved: t.solved,
+                        attempts: t.attempts
+                    }))
+                };
+
+                const { data: existingData } = await supabaseClient
+                    .from('game_state')
+                    .select('id')
+                    .eq('id', 1);
+
+                if (existingData && existingData.length > 0) {
+                    await supabaseClient
+                        .from('game_state')
+                        .update(gameData)
+                        .eq('id', 1);
+                } else {
+                    await supabaseClient
+                        .from('game_state')
+                        .insert([{ id: 1, ...gameData }]);
+                }
+            } catch (err) {
+                console.log('تم حفظ البيانات محلياً');
+            }
         }
 
         function renderTeams() {
@@ -209,6 +285,7 @@
                     <h3>الفريق ${t.number}</h3>
                     <p>الأعضاء: ${t.members.length}/4</p>
                     ${t.members.length > 0 ? `<p style="color: #ffd700; font-size: 0.9em;">👥 ${t.members.join(', ')}</p>` : '<p style="color: #4CAF50;">✅ متاح</p>'}
+                    ${t.solved ? `<p style="color: #4CAF50; font-weight: bold;">✅ تم حله</p>` : ''}
                     ${!isFull && !isMember ? `<button class="team-btn" onclick="selectTeam(${t.id})">اختر</button>` : ''}
                     ${isMember ? `<button class="team-btn danger" onclick="leaveTeam(${t.id})">غادر</button>` : ''}
                 </div>`;
@@ -218,7 +295,7 @@
 
         function selectTeam(id) {
             const t = teams.find(x => x.id === id);
-            if (t.members.length >= 4) { alert('ممتلئ'); return; }
+            if (t.members.length >= 4) { alert('الفريق ممتلئ'); return; }
             if (!t.members.includes(currentUser)) {
                 t.members.push(currentUser);
                 if (!t.leader) t.leader = currentUser;
@@ -235,51 +312,107 @@
             if (t.leader === currentUser && t.members.length > 0) t.leader = t.members[0];
             else if (t.members.length === 0) t.leader = null;
             save();
-            if (currentTeam?.id === id) { currentTeam = null; document.getElementById('startBtn').classList.remove('show'); }
+            if (currentTeam?.id === id) { 
+                currentTeam = null; 
+                document.getElementById('startBtn').classList.remove('show'); 
+            }
             renderTeams();
         }
 
         function startGame() {
-            if (!currentTeam) { alert('اختر فريق'); return; }
+            if (!currentTeam) { alert('اختر فريق أولاً'); return; }
             if (!gameStarted) { 
-                gameStarted = true; 
-                save(); 
-                startTimer(); 
+                gameStarted = true;
+                timeRemaining = 7200; // إعادة تعيين الوقت عند بدء اللعبة
+                save();
+                startTimerInterval();
             }
             document.getElementById('teamTitle').textContent = `الفريق ${currentTeam.number}`;
             document.getElementById('timerDisplay').style.display = 'block';
             show('code');
             document.getElementById('codeInput').focus();
+            updateTimerDisplay();
         }
 
-        function startTimer() {
+        function startTimerInterval() {
+            // تنظيف أي مؤقت سابق
+            if (timerInterval) clearInterval(timerInterval);
+
             timerInterval = setInterval(() => {
-                timeRemaining--;
-                save();
-                updateTime();
-                if (timeRemaining === 300) alert('⚠️ 5 دقائق');
-                if (timeRemaining <= 0) { clearInterval(timerInterval); alert('انتهى'); endGame(); }
+                if (gameStarted && timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+
+                    // حفظ كل 5 ثوان لتقليل طلبات الـ API
+                    if (timeRemaining % 5 === 0) {
+                        save();
+                    }
+
+                    if (timeRemaining === 300) {
+                        alert('⚠️ تحذير: 5 دقائق متبقية!');
+                    }
+
+                    if (timeRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        gameStarted = false;
+                        save();
+                        alert('⏰ انتهى الوقت!');
+                        endGame();
+                    }
+                }
             }, 1000);
         }
 
-        function updateTime() {
-            const h = Math.floor(timeRemaining / 3600), m = Math.floor((timeRemaining % 3600) / 60), s = timeRemaining % 60;
+        function toggleGameTimer() {
+            gameStarted = !gameStarted;
+            if (gameStarted) {
+                startTimerInterval();
+                alert('✅ تم بدء المؤقت');
+            } else {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                alert('⏸️ تم إيقاف المؤقت');
+            }
+            save();
+        }
+
+        function updateTimerDisplay() {
+            const h = Math.floor(timeRemaining / 3600);
+            const m = Math.floor((timeRemaining % 3600) / 60);
+            const s = timeRemaining % 60;
             const t = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            
             document.getElementById('timeLeft').textContent = t;
             document.getElementById('codeTime').textContent = t;
+
+            // تغيير اللون عند الاقتراب من النهاية
+            const timerElements = document.querySelectorAll('.timer');
+            timerElements.forEach(el => {
+                if (timeRemaining <= 300) {
+                    el.classList.add('timer-warning');
+                } else {
+                    el.classList.remove('timer-warning');
+                }
+            });
         }
 
         function verify() {
             const input = document.getElementById('codeInput').value.trim().toUpperCase();
-            if (!currentTeam || !input) { alert('خطأ'); return; }
+            if (!currentTeam || !input) { alert('أدخل الشفرة'); return; }
+            
             const correct = CODES[currentTeam.id - 1];
             const msg = document.getElementById('msg');
+            
             if (input === correct) {
                 msg.textContent = '✅ صحيح!';
                 msg.className = 'message success';
                 currentTeam.solved = true;
-                timeRemaining = Math.max(0, timeRemaining - 900);
+                timeRemaining = Math.max(0, timeRemaining - 900); // طرح 15 دقيقة
                 save();
+                
                 setTimeout(() => { 
                     let html = '';
                     IMAGES.forEach(img => html += `<div class="image-box"><img src="${img}" alt="صورة"></div>`);
@@ -302,32 +435,49 @@
         function endGame() {
             gameStarted = false;
             timeRemaining = 7200;
-            clearInterval(timerInterval);
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = null;
+            save();
             show('teams');
         }
 
         function showStats() {
-            let html = '<table class="stats-table"><tr><th>الفريق</th><th>الأعضاء</th><th>محل</th><th>محاولات</th></tr>';
+            let html = '<table class="stats-table"><tr><th>الفريق</th><th>الأعضاء</th><th>الحالة</th><th>المحاولات</th></tr>';
             teams.forEach(t => {
-                html += `<tr><td>الفريق ${t.number}</td><td>${t.members.length}</td><td>${t.solved ? '✅' : '❌'}</td><td>${t.attempts}</td></tr>`;
+                html += `<tr><td>الفريق ${t.number}</td><td>${t.members.length}/4</td><td>${t.solved ? '✅ تم' : '❌ لم يتم'}</td><td>${t.attempts}</td></tr>`;
             });
             html += '</table>';
             document.getElementById('statsContainer').innerHTML = html;
         }
 
         function resetGame() {
-            if (confirm('إعادة تعيين؟')) {
-                teams.forEach(t => { t.members = []; t.leader = null; t.solved = false; t.attempts = 0; });
+            if (confirm('هل أنت متأكد من إعادة تعيين اللعبة بالكامل؟')) {
+                teams.forEach(t => { 
+                    t.members = []; 
+                    t.leader = null; 
+                    t.solved = false; 
+                    t.attempts = 0; 
+                });
                 gameStarted = false;
                 timeRemaining = 7200;
-                clearInterval(timerInterval);
+                if (timerInterval) clearInterval(timerInterval);
+                timerInterval = null;
                 save();
-                alert('✅');
+                alert('✅ تم إعادة تعيين اللعبة بنجاح');
                 logout();
             }
         }
 
-        loadData();
+        // تحميل البيانات عند تحميل الصفحة
+        window.addEventListener('load', () => {
+            console.log('جاري تحميل البيانات...');
+            loadData();
+        });
+
+        // تحديث البيانات قبل مغادرة الصفحة
+        window.addEventListener('beforeunload', () => {
+            save();
+        });
     </script>
 </body>
 </html>
