@@ -3,222 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE COLOSSEUM</title>
+    <title>THE COLOSSEUM - تحقيق الشفرات</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Georgia', serif;
-            background: linear-gradient(135deg, #0a0e27, #1a1a3e);
-            color: #fff;
-            direction: rtl;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 3em;
-            color: #d4af37;
-            letter-spacing: 3px;
-        }
-
-        .screen {
-            display: none;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        .login-box {
-            background: rgba(212, 175, 55, 0.1);
-            border: 3px solid #d4af37;
-            padding: 50px;
-            border-radius: 10px;
-            max-width: 500px;
-            margin: 50px auto;
-            text-align: center;
-        }
-
-        .login-box h2 {
-            color: #d4af37;
-            margin-bottom: 30px;
-            font-size: 2em;
-        }
-
-        .login-box input {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 2px solid #d4af37;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.05);
-            color: inherit;
-            text-align: center;
-        }
-
-        .login-box button {
-            width: 100%;
-            padding: 15px;
-            background: #d4af37;
-            color: #000;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-
-        .teams-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .team-card {
-            background: rgba(212, 175, 55, 0.1);
-            border: 2px solid #d4af37;
-            padding: 25px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .team-card h3 {
-            color: #d4af37;
-            margin-bottom: 15px;
-        }
-
-        .team-card p {
-            margin-bottom: 10px;
-        }
-
-        .team-btn {
-            background: #d4af37;
-            color: #000;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        .start-btn {
-            width: 100%;
-            padding: 20px;
-            background: #d4af37;
-            color: #000;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.3em;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 30px;
-            display: none;
-        }
-
-        .start-btn.show {
-            display: block;
-        }
-
-        .code-container {
-            background: rgba(212, 175, 55, 0.1);
-            border: 3px solid #d4af37;
-            padding: 50px;
-            border-radius: 10px;
-            max-width: 600px;
-            margin: 50px auto;
-            text-align: center;
-        }
-
-        .timer {
-            background: rgba(212, 175, 55, 0.2);
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-            font-size: 1.5em;
-            font-family: monospace;
-            display: none;
-        }
-
-        .timer.show {
-            display: block;
-        }
-
-        .code-input {
-            width: 100%;
-            padding: 15px;
-            margin: 20px 0;
-            border: 2px solid #d4af37;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.05);
-            color: #d4af37;
-            text-align: center;
-            text-transform: uppercase;
-            font-size: 1.2em;
-        }
-
-        .message {
-            margin-top: 20px;
-            min-height: 30px;
-        }
-
-        .message.success {
-            color: #4CAF50;
-        }
-
-        .message.error {
-            color: #ff6b6b;
-        }
-
-        .images-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .image-box {
-            width: 100%;
-            height: 250px;
-            border: 2px solid #d4af37;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .image-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .admin-btn {
-            width: 100%;
-            padding: 15px;
-            background: #d4af37;
-            color: #000;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px 0;
-            font-weight: bold;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; background: linear-gradient(135deg, #0a0e27, #1a1a3e); color: #fff; direction: rtl; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 3em; color: #d4af37; letter-spacing: 3px; }
+        .screen { display: none; }
+        .screen.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .login-box { background: rgba(212, 175, 55, 0.1); border: 3px solid #d4af37; padding: 50px; border-radius: 10px; max-width: 500px; margin: 50px auto; text-align: center; }
+        .login-box h2 { color: #d4af37; margin-bottom: 30px; font-size: 2em; }
+        .login-box input { width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid #d4af37; border-radius: 5px; background: rgba(255, 255, 255, 0.05); color: inherit; text-align: center; }
+        .login-box button { width: 100%; padding: 15px; background: #d4af37; color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+        .login-box button:hover { background: #ffd700; }
+        .teams-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .team-card { background: rgba(212, 175, 55, 0.1); border: 2px solid #d4af37; padding: 25px; border-radius: 10px; text-align: center; }
+        .team-card h3 { color: #d4af37; margin-bottom: 15px; }
+        .team-card.selected { border-color: #ffd700; background: rgba(212, 175, 55, 0.3); }
+        .team-btn { background: #d4af37; color: #000; border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; }
+        .team-btn:hover { background: #ffd700; }
+        .team-btn.danger { background: #ff6b6b; color: white; }
+        .start-btn { width: 100%; padding: 20px; background: #d4af37; color: #000; border: none; border-radius: 5px; font-size: 1.3em; font-weight: bold; cursor: pointer; margin-top: 30px; display: none; }
+        .start-btn.show { display: block; }
+        .code-container { background: rgba(212, 175, 55, 0.1); border: 3px solid #d4af37; padding: 50px; border-radius: 10px; max-width: 600px; margin: 50px auto; text-align: center; }
+        .code-container h2 { color: #d4af37; font-size: 2em; margin-bottom: 30px; }
+        .timer { background: rgba(212, 175, 55, 0.2); padding: 15px; margin: 20px 0; border-radius: 5px; font-size: 1.5em; font-family: monospace; color: #d4af37; }
+        .code-input { width: 100%; padding: 15px; margin: 20px 0; border: 2px solid #d4af37; border-radius: 5px; background: rgba(255, 255, 255, 0.05); color: #d4af37; text-align: center; text-transform: uppercase; font-size: 1.2em; }
+        .message { margin-top: 20px; min-height: 30px; font-weight: bold; }
+        .message.success { color: #4CAF50; }
+        .message.error { color: #ff6b6b; }
+        .images-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
+        .image-box { width: 100%; height: 250px; border: 2px solid #d4af37; border-radius: 5px; overflow: hidden; }
+        .image-box img { width: 100%; height: 100%; object-fit: cover; }
+        .back-btn { width: 100%; padding: 15px; background: #d4af37; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .stats-table { width: 100%; color: #d4af37; border-collapse: collapse; margin-top: 20px; }
+        .stats-table th, .stats-table td { padding: 10px; border-bottom: 1px solid #666; text-align: center; }
+        .stats-table th { border-bottom: 2px solid #d4af37; }
+        h2 { text-align: center; color: #d4af37; margin-bottom: 30px; font-size: 2em; }
     </style>
 </head>
 <body>
@@ -231,9 +54,9 @@
         <div class="screen active" id="login">
             <div class="login-box">
                 <h2>تسجيل الدخول</h2>
-                <input type="text" id="name" placeholder="اسمك">
-                <button onclick="enterGame()">دخول</button>
-                <button onclick="adminScreen()" style="background: #888;">الإدارة</button>
+                <input type="text" id="nameInput" placeholder="أدخل اسمك">
+                <button onclick="login()">دخول</button>
+                <button onclick="showAdmin()" style="background: #888;">الإدارة</button>
             </div>
         </div>
 
@@ -243,44 +66,44 @@
                 <h2>دخول الإدارة</h2>
                 <input type="password" id="adminPass" placeholder="كلمة المرور">
                 <button onclick="checkAdmin()">دخول</button>
-                <button onclick="backLogin()" style="background: #888;">عودة</button>
+                <button onclick="logout()" style="background: #888;">عودة</button>
             </div>
         </div>
 
         <!-- Teams -->
         <div class="screen" id="teams">
-            <h2 style="text-align: center; color: #d4af37; margin-bottom: 30px;">اختر فريقك</h2>
-            <div class="timer show" id="timerDisplay">⏱️ <span id="time">02:00:00</span></div>
-            <div class="teams-grid" id="teamsGrid"></div>
+            <h2>اختر فريقك</h2>
+            <div class="timer" id="timerDisplay" style="display:none;">⏱️ <span id="timeLeft">02:00:00</span></div>
+            <div class="teams-grid" id="teamsContainer"></div>
             <button class="start-btn" id="startBtn" onclick="startGame()">ابدأ التحقيق</button>
         </div>
 
         <!-- Code -->
         <div class="screen" id="code">
             <div class="code-container">
-                <h2 id="teamName">الفريق</h2>
-                <div class="timer show" id="codeTimer">⏱️ <span id="codeTime">02:00:00</span></div>
+                <h2 id="teamTitle">الفريق</h2>
+                <div class="timer">⏱️ <span id="codeTime">02:00:00</span></div>
                 <input type="text" id="codeInput" class="code-input" placeholder="أدخل الشفرة" onkeypress="if(event.key==='Enter') verify()">
-                <button onclick="verify()" style="background: #d4af37; color: #000; padding: 15px; width: 100%; border: none; border-radius: 5px; cursor: pointer;">تحقق</button>
+                <button onclick="verify()" style="width: 100%; padding: 15px; background: #d4af37; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">تحقق</button>
                 <div class="message" id="msg"></div>
             </div>
         </div>
 
         <!-- Images -->
         <div class="screen" id="images">
-            <h2 style="text-align: center; color: #d4af37; margin-bottom: 30px;">ملفات القضية</h2>
-            <div class="images-grid" id="imagesGrid"></div>
-            <button onclick="backTeams()" style="width: 100%; padding: 15px; background: #d4af37; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">عودة</button>
+            <h2>ملفات القضية</h2>
+            <div class="images-grid" id="imagesContainer"></div>
+            <button class="back-btn" onclick="backTeams()">العودة</button>
         </div>
 
         <!-- Admin -->
         <div class="screen" id="admin">
             <div class="login-box">
                 <h2>لوحة الإدارة</h2>
-                <button class="admin-btn" onclick="showStats()">الإحصائيات</button>
-                <button class="admin-btn" onclick="resetGame()">إعادة تعيين</button>
-                <button class="admin-btn" onclick="backLogin()" style="background: #888;">خروج</button>
-                <div id="stats" style="margin-top: 30px;"></div>
+                <button class="team-btn" onclick="showStats()">الإحصائيات</button>
+                <button class="team-btn danger" onclick="resetGame()">إعادة تعيين</button>
+                <button class="team-btn" style="background: #888;" onclick="logout()">خروج</button>
+                <div id="statsContainer"></div>
             </div>
         </div>
     </div>
@@ -288,10 +111,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const { createClient } = supabase;
-        const supabaseClient = createClient(
-            'https://uidjszsqwuccjyzsatdk.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpZGpzenNxd3VjY2p5enNhdGRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4MDQwMzcsImV4cCI6MjA4NTM4MDAzN30.AGGAiOtEas-aW2rYSuzTCT3KbwkWrhCi9xA5AyrYxaM'
-        );
+        const supabaseClient = createClient('https://uidjszsqwuccjyzsatdk.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpZGpzenNxd3VjY2p5enNhdGRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4MDQwMzcsImV4cCI6MjA4NTM4MDAzN30.AGGAiOtEas-aW2rYSuzTCT3KbwkWrhCi9xA5AyrYxaM');
 
         const CODES = ['POWER', 'WISDOM', 'VALOR', 'PATIENCE', 'PROMTITUDE', 'FAITH', 'HONESTY', 'JUSTICE', 'INTEGRITY'];
         const IMAGES = ['https://i.imgur.com/mG1EsgX.jpg', 'https://i.imgur.com/BgxLUmr.jpg', 'https://i.imgur.com/shFAoGJ.jpg', 'https://i.imgur.com/9nQC9ay.jpg', 'https://i.imgur.com/X9vtn6w.jpg', 'https://i.imgur.com/23dKeLP.jpg', 'https://i.imgur.com/rICqT3D.jpg', 'https://i.imgur.com/3OAJguF.jpg', 'https://i.imgur.com/B3tnfms.jpg'];
@@ -304,20 +124,21 @@
         let timeRemaining = 7200;
         let timerInterval = null;
 
-        function show(screenId) {
+        function show(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+            document.getElementById(id).classList.add('active');
         }
 
-        function enterGame() {
-            const name = document.getElementById('name').value.trim();
+        async function login() {
+            const name = document.getElementById('nameInput').value.trim();
             if (!name) { alert('أدخل اسمك'); return; }
             currentUser = name;
-            loadData();
+            await loadData();
             show('teams');
+            renderTeams();
         }
 
-        function adminScreen() {
+        function showAdmin() {
             show('adminLogin');
         }
 
@@ -329,19 +150,19 @@
             }
         }
 
-        function backLogin() {
+        function logout() {
+            currentUser = null;
+            currentTeam = null;
+            document.getElementById('nameInput').value = '';
+            document.getElementById('adminPass').value = '';
             show('login');
-        }
-
-        function backTeams() {
-            show('teams');
         }
 
         async function loadData() {
             const { data } = await supabaseClient.from('game_state').select('*').eq('id', 1).single();
             if (data) {
-                gameStarted = data.started;
-                timeRemaining = data.time_remaining;
+                gameStarted = data.started || false;
+                timeRemaining = data.time_remaining || 7200;
                 if (data.teams) {
                     data.teams.forEach(t => {
                         const team = teams.find(x => x.id === t.id);
@@ -349,7 +170,6 @@
                     });
                 }
             }
-            renderTeams();
             subscribe();
         }
 
@@ -358,17 +178,25 @@
                 if (p.new) {
                     gameStarted = p.new.started;
                     timeRemaining = p.new.time_remaining;
-                    if (p.new.teams) p.new.teams.forEach(t => {
-                        const team = teams.find(x => x.id === t.id);
-                        if (team) Object.assign(team, t);
-                    });
-                    if (document.getElementById('teams').classList.contains('active')) renderTeams();
+                    if (p.new.teams) {
+                        p.new.teams.forEach(t => {
+                            const team = teams.find(x => x.id === t.id);
+                            if (team) Object.assign(team, t);
+                        });
+                    }
+                    if (document.getElementById('teams').classList.contains('active')) {
+                        renderTeams();
+                    }
                 }
             }).subscribe();
         }
 
         async function save() {
-            const gameData = {started: gameStarted, time_remaining: timeRemaining, teams: teams.map(t => ({id: t.id, number: t.number, members: t.members, leader: t.leader, solved: t.solved, attempts: t.attempts}))};
+            const gameData = {
+                started: gameStarted, 
+                time_remaining: timeRemaining, 
+                teams: teams.map(t => ({id: t.id, number: t.number, members: t.members, leader: t.leader, solved: t.solved, attempts: t.attempts}))
+            };
             await supabaseClient.from('game_state').update(gameData).eq('id', 1);
         }
 
@@ -377,20 +205,20 @@
             teams.forEach(t => {
                 const isMember = t.members.includes(currentUser);
                 const isFull = t.members.length >= 4 && !isMember;
-                html += `<div class="team-card" style="${currentTeam?.id === t.id ? 'border-color: #ffd700; background: rgba(212, 175, 55, 0.3);' : ''}">
+                html += `<div class="team-card ${currentTeam?.id === t.id ? 'selected' : ''}">
                     <h3>الفريق ${t.number}</h3>
                     <p>الأعضاء: ${t.members.length}/4</p>
                     ${t.members.length > 0 ? `<p style="color: #ffd700; font-size: 0.9em;">👥 ${t.members.join(', ')}</p>` : '<p style="color: #4CAF50;">✅ متاح</p>'}
                     ${!isFull && !isMember ? `<button class="team-btn" onclick="selectTeam(${t.id})">اختر</button>` : ''}
-                    ${isMember ? `<button class="team-btn" style="background: #ff6b6b;" onclick="leaveTeam(${t.id})">غادر</button>` : ''}
+                    ${isMember ? `<button class="team-btn danger" onclick="leaveTeam(${t.id})">غادر</button>` : ''}
                 </div>`;
             });
-            document.getElementById('teamsGrid').innerHTML = html;
+            document.getElementById('teamsContainer').innerHTML = html;
         }
 
         function selectTeam(id) {
             const t = teams.find(x => x.id === id);
-            if (t.members.length >= 4 && !t.members.includes(currentUser)) { alert('ممتلئ'); return; }
+            if (t.members.length >= 4) { alert('ممتلئ'); return; }
             if (!t.members.includes(currentUser)) {
                 t.members.push(currentUser);
                 if (!t.leader) t.leader = currentUser;
@@ -413,10 +241,15 @@
 
         function startGame() {
             if (!currentTeam) { alert('اختر فريق'); return; }
-            if (!gameStarted) { gameStarted = true; save(); startTimer(); }
-            document.getElementById('teamName').textContent = `الفريق ${currentTeam.number}`;
+            if (!gameStarted) { 
+                gameStarted = true; 
+                save(); 
+                startTimer(); 
+            }
+            document.getElementById('teamTitle').textContent = `الفريق ${currentTeam.number}`;
+            document.getElementById('timerDisplay').style.display = 'block';
             show('code');
-            document.getElementById('code').focus();
+            document.getElementById('codeInput').focus();
         }
 
         function startTimer() {
@@ -432,31 +265,27 @@
         function updateTime() {
             const h = Math.floor(timeRemaining / 3600), m = Math.floor((timeRemaining % 3600) / 60), s = timeRemaining % 60;
             const t = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-            document.getElementById('time').textContent = t;
+            document.getElementById('timeLeft').textContent = t;
             document.getElementById('codeTime').textContent = t;
         }
 
         function verify() {
             const input = document.getElementById('codeInput').value.trim().toUpperCase();
-            if (!currentTeam) {
-                alert('لم يتم اختيار فريق');
-                return;
-            }
+            if (!currentTeam || !input) { alert('خطأ'); return; }
             const correct = CODES[currentTeam.id - 1];
             const msg = document.getElementById('msg');
-            
-            if (!input) {
-                alert('أدخل الشفرة');
-                return;
-            }
-            
             if (input === correct) {
                 msg.textContent = '✅ صحيح!';
                 msg.className = 'message success';
                 currentTeam.solved = true;
                 timeRemaining = Math.max(0, timeRemaining - 900);
                 save();
-                setTimeout(() => showImages(), 1500);
+                setTimeout(() => { 
+                    let html = '';
+                    IMAGES.forEach(img => html += `<div class="image-box"><img src="${img}" alt="صورة"></div>`);
+                    document.getElementById('imagesContainer').innerHTML = html;
+                    show('images');
+                }, 1500);
             } else {
                 currentTeam.attempts++;
                 msg.innerHTML = `❌ خطأ!<br>المحاولات: ${currentTeam.attempts}`;
@@ -466,29 +295,24 @@
             }
         }
 
-        function showImages() {
-            let html = '';
-            IMAGES.forEach((img, i) => {
-                html += `<div class="image-box"><img src="${img}" alt="صورة"></div>`;
-            });
-            document.getElementById('imagesGrid').innerHTML = html;
-            show('images');
+        function backTeams() {
+            show('teams');
         }
 
         function endGame() {
             gameStarted = false;
             timeRemaining = 7200;
             clearInterval(timerInterval);
-            backTeams();
+            show('teams');
         }
 
         function showStats() {
-            let html = '<table style="width: 100%; color: #d4af37; border-collapse: collapse;"><tr style="border-bottom: 2px solid #d4af37;"><th style="padding: 10px;">الفريق</th><th>الأعضاء</th><th>محل</th><th>محاولات</th></tr>';
+            let html = '<table class="stats-table"><tr><th>الفريق</th><th>الأعضاء</th><th>محل</th><th>محاولات</th></tr>';
             teams.forEach(t => {
-                html += `<tr style="border-bottom: 1px solid #666;"><td style="padding: 10px;">الفريق ${t.number}</td><td>${t.members.length}</td><td>${t.solved ? '✅' : '❌'}</td><td>${t.attempts}</td></tr>`;
+                html += `<tr><td>الفريق ${t.number}</td><td>${t.members.length}</td><td>${t.solved ? '✅' : '❌'}</td><td>${t.attempts}</td></tr>`;
             });
             html += '</table>';
-            document.getElementById('stats').innerHTML = html;
+            document.getElementById('statsContainer').innerHTML = html;
         }
 
         function resetGame() {
@@ -496,9 +320,10 @@
                 teams.forEach(t => { t.members = []; t.leader = null; t.solved = false; t.attempts = 0; });
                 gameStarted = false;
                 timeRemaining = 7200;
+                clearInterval(timerInterval);
                 save();
                 alert('✅');
-                backLogin();
+                logout();
             }
         }
 
