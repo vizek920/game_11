@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -321,8 +320,6 @@
         async function loadUserState() {
             const { data } = await supabaseClient.from('game_state').select('*').eq('id', 1).single();
             if (data) {
-                currentScreen = data.current_screen || 'login';
-                currentUser = data.current_user || null;
                 gameStarted = data.started || false;
                 timeRemaining = data.time_remaining || 7200;
                 if (data.teams) {
@@ -332,13 +329,14 @@
                     });
                 }
                 
-                // عرض الشاشة الصحيحة
-                if (currentUser) {
-                    show(currentScreen);
+                // فقط إذا كان المستخدم موجود مسبقاً
+                if (data.current_user && data.current_user === currentUser) {
+                    currentScreen = data.current_screen || 'teams';
                     if (gameStarted && !timerInterval) {
                         continueTimer();
                     }
-                } else {
+                    show(currentScreen);
+                } else if (!currentUser) {
                     show('login');
                 }
             }
