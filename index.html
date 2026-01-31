@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -303,17 +304,51 @@
         let gameStarted = false;
         let timeRemaining = 7200;
         let timerInterval = null;
+        let currentScreen = 'login';
 
         function show(screenId) {
+            currentScreen = screenId;
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
+            saveUserState();
+        }
+
+        async function saveUserState() {
+            if (!currentUser) return;
+            await supabaseClient.from('game_state').update({current_screen: currentScreen, current_user: currentUser}).eq('id', 1);
+        }
+
+        async function loadUserState() {
+            const { data } = await supabaseClient.from('game_state').select('*').eq('id', 1).single();
+            if (data) {
+                currentScreen = data.current_screen || 'login';
+                currentUser = data.current_user || null;
+                gameStarted = data.started || false;
+                timeRemaining = data.time_remaining || 7200;
+                if (data.teams) {
+                    data.teams.forEach(t => {
+                        const team = teams.find(x => x.id === t.id);
+                        if (team) Object.assign(team, t);
+                    });
+                }
+                
+                // عرض الشاشة الصحيحة
+                if (currentUser) {
+                    show(currentScreen);
+                    if (gameStarted && !timerInterval) {
+                        continueTimer();
+                    }
+                } else {
+                    show('login');
+                }
+            }
         }
 
         function enterGame() {
             const name = document.getElementById('name').value.trim();
             if (!name) { alert('أدخل اسمك'); return; }
             currentUser = name;
-            loadData();
+            loadUserState();
             show('teams');
         }
 
@@ -368,7 +403,13 @@
         }
 
         async function save() {
-            const gameData = {started: gameStarted, time_remaining: timeRemaining, teams: teams.map(t => ({id: t.id, number: t.number, members: t.members, leader: t.leader, solved: t.solved, attempts: t.attempts}))};
+            const gameData = {
+                started: gameStarted, 
+                time_remaining: timeRemaining, 
+                current_screen: currentScreen,
+                current_user: currentUser,
+                teams: teams.map(t => ({id: t.id, number: t.number, members: t.members, leader: t.leader, solved: t.solved, attempts: t.attempts}))
+            };
             await supabaseClient.from('game_state').update(gameData).eq('id', 1);
         }
 
