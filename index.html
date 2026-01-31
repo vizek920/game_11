@@ -320,6 +320,8 @@
         async function loadUserState() {
             const { data } = await supabaseClient.from('game_state').select('*').eq('id', 1).single();
             if (data) {
+                currentScreen = data.current_screen || 'login';
+                currentUser = data.current_user || null;
                 gameStarted = data.started || false;
                 timeRemaining = data.time_remaining || 7200;
                 if (data.teams) {
@@ -329,14 +331,13 @@
                     });
                 }
                 
-                // فقط إذا كان المستخدم موجود مسبقاً
-                if (data.current_user && data.current_user === currentUser) {
-                    currentScreen = data.current_screen || 'teams';
+                // عرض الشاشة الصحيحة
+                if (currentUser) {
+                    show(currentScreen);
                     if (gameStarted && !timerInterval) {
                         continueTimer();
                     }
-                    show(currentScreen);
-                } else if (!currentUser) {
+                } else {
                     show('login');
                 }
             }
