@@ -93,6 +93,10 @@
         <!-- Images -->
         <div class="screen" id="images">
             <h2>ملفات القضية</h2>
+            <div style="margin: 20px 0; text-align: center;">
+                <button onclick="downloadAllImages()" style="padding: 12px 30px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px;">📥 تحميل جميع الصور</button>
+                <button onclick="copyAllImageUrls()" style="padding: 12px 30px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px;">📋 نسخ جميع الروابط</button>
+            </div>
             <div class="images-grid" id="imagesContainer"></div>
             <button class="back-btn" onclick="backTeams()">العودة</button>
         </div>
@@ -111,6 +115,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
         const { createClient } = supabase;
         const supabaseClient = createClient('https://uidjszsqwuccjyzsatdk.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpZGpzenNxd3VjY2p5enNhdGRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4MDQwMzcsImV4cCI6MjA4NTM4MDAzN30.AGGAiOtEas-aW2rYSuzTCT3KbwkWrhCi9xA5AyrYxaM');
@@ -119,6 +124,20 @@
         const CODES = [
             'POWER', 'WISDOM', 'VALOR', 'PATIENCE', 'PROMTITUDE', 
             'FAITH', 'HONESTY', 'JUSTICE', 'INTEGRITY', 'LOYALTY', 'CONFIDENCE'
+        ];
+
+        const TEAM_NAMES = [
+            'Maximus',
+            'Aurelius',
+            'Cassius',
+            'Tiberius',
+            'Lucius',
+            'Valerius',
+            'Septimus',
+            'Magnus',
+            'Decimus',
+            'Dominus',
+            'Ashur'
         ];
 
         const IMAGES = [
@@ -281,8 +300,9 @@
             teams.forEach(t => {
                 const isMember = t.members.includes(currentUser);
                 const isFull = t.members.length >= 4 && !isMember;
+                const teamName = TEAM_NAMES[t.id - 1];
                 html += `<div class="team-card ${currentTeam?.id === t.id ? 'selected' : ''}">
-                    <h3>الفريق ${t.number}</h3>
+                    <h3>${teamName}</h3>
                     <p>الأعضاء: ${t.members.length}/4</p>
                     ${t.members.length > 0 ? `<p style="color: #ffd700; font-size: 0.9em;">👥 ${t.members.join(', ')}</p>` : '<p style="color: #4CAF50;">✅ متاح</p>'}
                     ${t.solved ? `<p style="color: #4CAF50; font-weight: bold;">✅ تم حله</p>` : ''}
@@ -321,14 +341,17 @@
 
         function startGame() {
             if (!currentTeam) { alert('اختر فريق أولاً'); return; }
+            
             if (!gameStarted) { 
                 gameStarted = true;
-                timeRemaining = 7200; // إعادة تعيين الوقت عند بدء اللعبة
+                timeRemaining = 7200;
                 save();
                 startTimerInterval();
+                document.getElementById('timerDisplay').style.display = 'block';
             }
-            document.getElementById('teamTitle').textContent = `الفريق ${currentTeam.number}`;
-            document.getElementById('timerDisplay').style.display = 'block';
+            
+            const teamName = TEAM_NAMES[currentTeam.id - 1];
+            document.getElementById('teamTitle').textContent = `فريق ${teamName}`;
             show('code');
             document.getElementById('codeInput').focus();
             updateTimerDisplay();
@@ -410,12 +433,12 @@
                 msg.textContent = '✅ صحيح!';
                 msg.className = 'message success';
                 currentTeam.solved = true;
-                timeRemaining = Math.max(0, timeRemaining - 900); // طرح 15 دقيقة
+                timeRemaining = Math.max(0, timeRemaining - 900);
                 save();
                 
                 setTimeout(() => { 
                     let html = '';
-                    IMAGES.forEach(img => html += `<div class="image-box"><img src="${img}" alt="صورة"></div>`);
+                    IMAGES.forEach((img, idx) => html += `<div class="image-box"><img src="${img}" alt="صورة"></div>`);
                     document.getElementById('imagesContainer').innerHTML = html;
                     show('images');
                 }, 1500);
@@ -426,6 +449,45 @@
                 document.getElementById('codeInput').value = '';
                 save();
             }
+        }
+
+        function downloadAllImages() {
+            const zip = new JSZip();
+            let loadedCount = 0;
+
+            IMAGES.forEach((url, idx) => {
+                fetch(url)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        zip.file(`صورة_${idx + 1}.jpg`, blob);
+                        loadedCount++;
+                        if (loadedCount === IMAGES.length) {
+                            zip.generateAsync({type: 'blob'})
+                                .then(content => {
+                                    const link = document.createElement('a');
+                                    link.href = URL.createObjectURL(content);
+                                    link.download = 'ملفات_القضية.zip';
+                                    link.click();
+                                    alert('✅ تم تحميل جميع الصور!');
+                                });
+                        }
+                    })
+                    .catch(() => {
+                        loadedCount++;
+                        if (loadedCount === IMAGES.length) {
+                            alert('⚠️ بعض الصور لم تُحمّل بنجاح');
+                        }
+                    });
+            });
+        }
+
+        function copyAllImageUrls() {
+            const urls = IMAGES.join('\n');
+            navigator.clipboard.writeText(urls).then(() => {
+                alert('✅ تم نسخ جميع الروابط!');
+            }).catch(() => {
+                alert('❌ فشل النسخ، حاول يدوياً');
+            });
         }
 
         function backTeams() {
@@ -444,7 +506,8 @@
         function showStats() {
             let html = '<table class="stats-table"><tr><th>الفريق</th><th>الأعضاء</th><th>الحالة</th><th>المحاولات</th></tr>';
             teams.forEach(t => {
-                html += `<tr><td>الفريق ${t.number}</td><td>${t.members.length}/4</td><td>${t.solved ? '✅ تم' : '❌ لم يتم'}</td><td>${t.attempts}</td></tr>`;
+                const teamName = TEAM_NAMES[t.id - 1];
+                html += `<tr><td>${teamName}</td><td>${t.members.length}/4</td><td>${t.solved ? '✅ تم' : '❌ لم يتم'}</td><td>${t.attempts}</td></tr>`;
             });
             html += '</table>';
             document.getElementById('statsContainer').innerHTML = html;
